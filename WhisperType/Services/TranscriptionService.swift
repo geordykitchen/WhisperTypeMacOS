@@ -58,7 +58,8 @@ actor TranscriptionService {
             "--output-txt",
             "--output-file", outputBase.path,
             "--no-timestamps",
-            "--no-prints"
+            "--no-prints",
+            "--max-context", "0"
         ]
         if configuration.translateToEnglish { arguments.append("--translate") }
         if !configuration.vocabularyPrompt.isEmpty {
@@ -139,7 +140,8 @@ actor TranscriptionService {
             "--threads", String(max(4, min(10, ProcessInfo.processInfo.activeProcessorCount - 2))),
             "--language", "auto",
             "--flash-attn",
-            "--no-timestamps"
+            "--no-timestamps",
+            "--max-context", "0"
         ]
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
@@ -186,6 +188,7 @@ actor TranscriptionService {
         appendField("temperature", "0.0")
         appendField("temperature_inc", "0.2")
         appendField("response_format", "json")
+        appendField("max_context", "0")
         appendField("prompt", String(configuration.vocabularyPrompt.prefix(1_200)))
         body.appendUTF8("--\(boundary)\r\n")
         body.appendUTF8("Content-Disposition: form-data; name=\"file\"; filename=\"recording.wav\"\r\n")
